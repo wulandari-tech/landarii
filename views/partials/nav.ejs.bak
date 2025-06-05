@@ -35,12 +35,13 @@
                  <li><a href="/" class="<%= currentPath === '/' ? 'active' : '' %>"><span class="icon"><i class="fas fa-home"></i></span> Beranda</a></li>
             <% } %>
             <li><a href="/testimonials" class="<%= currentPath.startsWith('/testimonials') ? 'active' : '' %>"><span class="icon"><i class="fas fa-star"></i></span> Testimoni</a></li>
+            <li><a href="/admin/dashboard"><span class="icon"><i class="fas fa-user-shield"></i></span> Panel Admin</a></li>
         <% } %>
     </ul>
 
     <% if (!isAdminRoute) { %>
         <div class="sidebar-contact-buttons">
-            <a href="https://wa.me/message/Y43QAQNI2ACXO1" target="_blank" class="btn whatsapp-btn">
+            <a href="https://wa.me/message/OUC34BIRP237G1" target="_blank" class="btn whatsapp-btn">
                 <span class="icon"><i class="fab fa-whatsapp"></i></span> Tanya via WhatsApp
             </a>
         </div>
