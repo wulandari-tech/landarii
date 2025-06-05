@@ -12,53 +12,42 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const sidebar = document.getElementById('sidebar');
     const mainHeaderMenuToggle = document.getElementById('menuToggle'); 
-    const sidebarInternalMenuToggle = document.getElementById('sidebarMenuToggle');
+    const sidebarMenuToggle = document.getElementById('sidebarMenuToggle');
     const overlay = document.getElementById('overlay');
     const body = document.body;
 
-    function commonToggleSidebarActions() {
-        if (sidebar) sidebar.classList.toggle('open');
-        if (overlay) overlay.classList.toggle('active');
-        if (body) body.classList.toggle('sidebar-open');
-        
-        const isOpen = sidebar ? sidebar.classList.contains('open') : false;
-
-        if (mainHeaderMenuToggle) {
-            const icon = mainHeaderMenuToggle.querySelector('i');
-            if (icon) {
-                icon.className = isOpen ? 'fas fa-times' : 'fas fa-bars';
-            }
-        }
-        if (sidebarInternalMenuToggle) {
-             const icon = sidebarInternalMenuToggle.querySelector('i');
-             if (icon) {
-                icon.className = isOpen ? 'fas fa-times' : 'fas fa-bars';
-             }
-        }
-        
+    function setSidebarCookie(isOpen) {
         fetch('/toggle-sidebar-cookie', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ isOpen: isOpen })
-        }).catch(err => console.error('Error saving sidebar state:', err));
-    }
-    
-    if (mainHeaderMenuToggle) {
-        mainHeaderMenuToggle.addEventListener('click', commonToggleSidebarActions);
-    }
-    if (sidebarInternalMenuToggle) {
-        sidebarInternalMenuToggle.addEventListener('click', commonToggleSidebarActions);
+        }).catch(err => console.error('Error setting sidebar cookie:', err));
     }
 
+    function toggleSidebar() {
+        if (sidebar) {
+            const isOpen = sidebar.classList.toggle('open');
+            body.classList.toggle('sidebar-open', isOpen);
+            setSidebarCookie(isOpen);
+        }
+        if (overlay) overlay.classList.toggle('active');
+        
+        const iconClass = sidebar && sidebar.classList.contains('open') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        if (mainHeaderMenuToggle) mainHeaderMenuToggle.innerHTML = iconClass;
+        if (sidebarMenuToggle) sidebarMenuToggle.innerHTML = iconClass;
+    }
+    
+    if (mainHeaderMenuToggle) mainHeaderMenuToggle.addEventListener('click', toggleSidebar);
+    if (sidebarMenuToggle) sidebarMenuToggle.addEventListener('click', toggleSidebar);
     if (overlay) {
         overlay.addEventListener('click', () => {
             if (sidebar && sidebar.classList.contains('open')) {
-                commonToggleSidebarActions();
+                toggleSidebar();
             }
         });
     }
 
-    document.querySelectorAll('.sidebar-nav a[href^="/#"]').forEach(anchor => {
+    document.querySelectorAll('.sidebar-nav a[href^="/#"], .main-header-nav a[href^="/#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             if (window.location.pathname === '/' && this.getAttribute('href').startsWith('/#')) {
                 e.preventDefault();
@@ -66,25 +55,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 const targetElement = document.getElementById(targetId);
                 if (targetElement) {
                     let offset = 0;
-                    const mainHeaderNav = document.querySelector('.main-header-nav');
-                    const promoMarquee = document.querySelector('.promo-marquee-banner');
-                    if (mainHeaderNav && getComputedStyle(mainHeaderNav).position === 'sticky') {
-                        offset += mainHeaderNav.offsetHeight;
-                    }
-                    if (promoMarquee && getComputedStyle(promoMarquee).position === 'sticky') {
-                        offset += promoMarquee.offsetHeight;
-                    }
+                    const stickyNav = document.querySelector('.main-header-nav');
+                    const stickyPromo = document.querySelector('div[style*="marquee"][style*="sticky"]');
+                    
+                    if (stickyNav && getComputedStyle(stickyNav).position === 'sticky') offset += stickyNav.offsetHeight;
+                    if (stickyPromo && getComputedStyle(stickyPromo).position === 'sticky') offset += stickyPromo.offsetHeight;
                     
                     const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
                     const offsetPosition = elementPosition - offset;
 
-                    window.scrollTo({
-                        top: offsetPosition,
-                        behavior: 'smooth'
-                    });
+                    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
                 }
                 if (sidebar && sidebar.classList.contains('open') && window.innerWidth <= 768) {
-                    commonToggleSidebarActions();
+                    toggleSidebar();
                 }
             } else if (this.getAttribute('href').startsWith('/#')) {
                  window.location.href = '/' + this.getAttribute('href').substring(1);
@@ -95,18 +78,23 @@ document.addEventListener('DOMContentLoaded', function () {
     const navLinks = document.querySelectorAll('.main-header-nav a, .sidebar-nav a');
     function updateActiveLink() {
         let currentSectionId = '';
-        const sections = document.querySelectorAll('.content-section');
-        const offset = window.innerHeight * 0.4; 
+        const sections = document.querySelectorAll('.content-section[id]');
+        let offsetCalculation = window.innerHeight * 0.4;
+        const mainNav = document.querySelector('.main-header-nav');
+        const promoMarquee = document.querySelector('div[style*="marquee"][style*="sticky"]');
+
+        if (mainNav && getComputedStyle(mainNav).position === 'sticky') offsetCalculation += mainNav.offsetHeight;
+        if (promoMarquee && getComputedStyle(promoMarquee).position === 'sticky') offsetCalculation += promoMarquee.offsetHeight;
+
 
         sections.forEach(section => {
-            const sectionTop = section.offsetTop - offset;
-            const sectionHeight = section.offsetHeight;
-            if (pageYOffset >= sectionTop && pageYOffset < sectionTop + sectionHeight) {
+            const sectionTop = section.offsetTop - offsetCalculation;
+            if (pageYOffset >= sectionTop) {
                 currentSectionId = section.getAttribute('id');
             }
         });
         
-        if (pageYOffset < window.innerHeight * 0.5 && document.getElementById('hero')) {
+        if (!currentSectionId && pageYOffset < window.innerHeight * 0.5 && document.getElementById('hero')) {
             currentSectionId = 'hero';
         }
 
@@ -114,11 +102,12 @@ document.addEventListener('DOMContentLoaded', function () {
             link.classList.remove('active');
             const href = link.getAttribute('href');
             if (href) {
-                if (href.includes(currentSectionId) && currentSectionId !== '') {
+                const linkTargetId = href.includes('#') ? href.substring(href.indexOf('#') + 1) : null;
+                if (linkTargetId && linkTargetId === currentSectionId) {
                     link.classList.add('active');
                 } else if ((href === '/' || href === '/#hero') && currentSectionId === 'hero') {
                      link.classList.add('active');
-                } else if (window.location.pathname === href && !href.includes('#')) {
+                } else if (!href.includes('#') && window.location.pathname === href) {
                     link.classList.add('active');
                 }
             }
@@ -133,15 +122,15 @@ document.addEventListener('DOMContentLoaded', function () {
     const acceptCookieButton = document.getElementById('acceptCookieButton');
     const cookieConsentBanner = document.getElementById('cookieConsentBanner');
     if (acceptCookieButton && cookieConsentBanner) {
-        if (!document.cookie.split('; ').find(row => row.startsWith('cookie_consent='))) {
-             if(cookieConsentBanner) cookieConsentBanner.style.display = 'flex';
+        if (!document.cookie.split('; ').find(row => row.startsWith('cookie_consent=accepted'))) {
+            cookieConsentBanner.style.display = 'flex';
         }
         acceptCookieButton.addEventListener('click', function () {
             fetch('/set-cookie-consent')
                 .then(response => response.json())
                 .then(data => {
                     if (data.message === 'Cookie consent set') {
-                        if(cookieConsentBanner) cookieConsentBanner.style.display = 'none';
+                        cookieConsentBanner.style.display = 'none';
                     }
                 })
                 .catch(error => console.error('Error setting cookie consent:', error));
@@ -165,20 +154,20 @@ document.addEventListener('DOMContentLoaded', function () {
     let currentProductData = null;
 
     function formatCurrency(amount) {
+        if (typeof amount !== 'number' || isNaN(amount)) {
+            return '0'; 
+        }
         return amount.toLocaleString('id-ID');
     }
 
     function resetModal() {
         if(modalProductName) modalProductName.textContent = 'Nama Produk';
-        if(modalOriginalPrice) modalOriginalPrice.textContent = '0';
-        if(modalDiscountAmount) modalDiscountAmount.textContent = '0';
-        if(modalFinalPrice) modalFinalPrice.textContent = '0';
+        if(modalOriginalPrice) modalOriginalPrice.textContent = formatCurrency(0);
+        if(modalDiscountAmount) modalDiscountAmount.textContent = formatCurrency(0);
+        if(modalFinalPrice) modalFinalPrice.textContent = formatCurrency(0);
         if(modalProductIdInput) modalProductIdInput.value = '';
         if(promoCodeInput) promoCodeInput.value = '';
-        if(promoMessageEl) {
-            promoMessageEl.textContent = '';
-            promoMessageEl.className = '';
-        }
+        if(promoMessageEl) { promoMessageEl.textContent = ''; promoMessageEl.className = ''; }
         if(modalAppliedPromoCodeInput) modalAppliedPromoCodeInput.value = '';
         currentProductData = null;
     }
@@ -197,76 +186,80 @@ document.addEventListener('DOMContentLoaded', function () {
                 
                 fetch(`/api/product/${productId}`) 
                     .then(response => {
-                        if(!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                        if (!response.ok) throw new Error('Produk tidak ditemukan atau error server');
                         return response.json();
                     })
                     .then(product => {
                         currentProductData = product;
                         if(modalProductName) modalProductName.textContent = product.name;
                         if(modalProductIdInput) modalProductIdInput.value = product.id;
-                        updatePriceDisplay(product.price, 0, product.price);
+                        updatePriceDisplay(Number(product.price) || 0, 0, Number(product.price) || 0);
                         checkoutModal.style.display = 'flex';
                     })
                     .catch(err => {
                         console.error("Error fetching product details:", err);
-                        Swal.fire('Error', 'Gagal memuat detail produk. Produk mungkin tidak ditemukan.', 'error');
+                        Swal.fire('Error', err.message || 'Gagal memuat detail produk.', 'error');
                     });
             });
         });
 
         if (closeModalBtn) {
-            closeModalBtn.onclick = function () {
-                if(checkoutModal) checkoutModal.style.display = 'none';
-            }
+            closeModalBtn.onclick = function () { checkoutModal.style.display = 'none'; }
         }
 
-        if(checkoutModal) {
-            checkoutModal.addEventListener('click', function(event){
-                if (event.target == checkoutModal) {
-                     checkoutModal.style.display = 'none';
-                }
-            });
+        window.onclick = function (event) {
+            if (event.target == checkoutModal) { checkoutModal.style.display = 'none'; }
         }
-        
 
         if (applyPromoBtn) {
             applyPromoBtn.addEventListener('click', function() {
-                const promoCode = promoCodeInput.value.trim();
-                const productId = modalProductIdInput.value;
+                const promoCodeVal = promoCodeInput.value.trim();
+                const productIdVal = modalProductIdInput.value;
 
-                if (!promoCode) {
-                    if(promoMessageEl) {promoMessageEl.textContent = 'Masukkan kode promo.'; promoMessageEl.className = 'error';}
-                    return;
+                if (!promoCodeVal) {
+                    promoMessageEl.textContent = 'Masukkan kode promo.';
+                    promoMessageEl.className = 'error'; return;
                 }
                 if (!currentProductData) {
-                     if(promoMessageEl) {promoMessageEl.textContent = 'Data produk tidak ditemukan.'; promoMessageEl.className = 'error';}
-                     return;
+                     promoMessageEl.textContent = 'Data produk tidak ditemukan.';
+                     promoMessageEl.className = 'error'; return;
                 }
 
                 applyPromoBtn.disabled = true;
-                applyPromoBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                applyPromoBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menerapkan...';
+                promoMessageEl.textContent = ''; promoMessageEl.className = '';
 
                 fetch('/apply-promo', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ productId: productId, promoCode: promoCode })
+                    body: JSON.stringify({ productId: productIdVal, promoCode: promoCodeVal })
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(errData => { throw new Error(errData.error || `HTTP error! status: ${response.status}`); });
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.success) {
-                        if(promoMessageEl) {promoMessageEl.textContent = data.message; promoMessageEl.className = 'success';}
-                        updatePriceDisplay(data.originalPrice, data.discountAmount, data.finalPrice);
+                        promoMessageEl.textContent = data.message;
+                        promoMessageEl.className = 'success';
+                        updatePriceDisplay(Number(data.originalPrice) || 0, Number(data.discountAmount) || 0, Number(data.finalPrice) || 0);
                         if(modalAppliedPromoCodeInput) modalAppliedPromoCodeInput.value = data.appliedPromoCode;
                     } else {
-                        if(promoMessageEl) {promoMessageEl.textContent = data.error || 'Kode promo tidak valid.'; promoMessageEl.className = 'error';}
-                        updatePriceDisplay(data.originalPrice || currentProductData.price, data.discountAmount || 0, data.finalPrice || currentProductData.price);
+                        promoMessageEl.textContent = data.error || 'Kode promo tidak dapat diterapkan.';
+                        promoMessageEl.className = 'error';
+                        const basePrice = currentProductData ? Number(currentProductData.price) : 0;
+                        updatePriceDisplay(Number(data.originalPrice) || basePrice, Number(data.discountAmount) || 0, Number(data.finalPrice) || basePrice);
                         if(modalAppliedPromoCodeInput) modalAppliedPromoCodeInput.value = '';
                     }
                 })
                 .catch(err => {
                     console.error("Error applying promo:", err);
-                    if(promoMessageEl) {promoMessageEl.textContent = 'Terjadi kesalahan. Coba lagi.'; promoMessageEl.className = 'error';}
-                    updatePriceDisplay(currentProductData.price, 0, currentProductData.price);
+                    promoMessageEl.textContent = err.message || 'Terjadi kesalahan jaringan. Coba lagi.';
+                    promoMessageEl.className = 'error';
+                    const basePrice = currentProductData ? Number(currentProductData.price) : 0;
+                    updatePriceDisplay(basePrice, 0, basePrice);
                     if(modalAppliedPromoCodeInput) modalAppliedPromoCodeInput.value = '';
                 })
                 .finally(() => {
@@ -278,12 +271,9 @@ document.addEventListener('DOMContentLoaded', function () {
         
         if (promoCodeInput) {
             promoCodeInput.addEventListener('input', () => {
-                if (promoMessageEl) {
-                    promoMessageEl.textContent = '';
-                    promoMessageEl.className = '';
-                }
+                if (promoMessageEl) { promoMessageEl.textContent = ''; promoMessageEl.className = ''; }
                 if (currentProductData && modalAppliedPromoCodeInput && modalAppliedPromoCodeInput.value) { 
-                    updatePriceDisplay(currentProductData.price, 0, currentProductData.price);
+                    updatePriceDisplay(Number(currentProductData.price) || 0, 0, Number(currentProductData.price) || 0);
                     modalAppliedPromoCodeInput.value = '';
                 }
             });
@@ -291,8 +281,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (proceedToPaymentBtn) {
             proceedToPaymentBtn.addEventListener('click', function () {
-                const productId = modalProductIdInput.value;
-                const appliedPromo = modalAppliedPromoCodeInput.value;
+                const productIdVal = modalProductIdInput.value;
+                const appliedPromoVal = modalAppliedPromoCodeInput.value;
                 
                 proceedToPaymentBtn.disabled = true;
                 proceedToPaymentBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
@@ -300,48 +290,36 @@ document.addEventListener('DOMContentLoaded', function () {
                 fetch('/create-transaction', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        productId: productId, 
-                        quantity: 1,
-                        appliedPromoCode: appliedPromo || null
-                    })
+                    body: JSON.stringify({ productId: productIdVal, quantity: 1, appliedPromoCode: appliedPromoVal || null })
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(errData => { throw new Error(errData.error || `Gagal membuat transaksi. Status: ${response.status}`); });
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.token) {
                         if (checkoutModal) checkoutModal.style.display = 'none';
                         snap.pay(data.token, {
-                            onSuccess: function (result) {
-                                window.location.href = `/payment-status?order_id=${result.order_id}&status=success&transaction_status=${result.transaction_status}&fraud_status=${result.fraud_status}`;
-                            },
-                            onPending: function (result) {
-                                window.location.href = `/payment-status?order_id=${result.order_id}&status=pending&transaction_status=${result.transaction_status}&fraud_status=${result.fraud_status}`;
-                            },
-                            onError: function (result) {
-                                window.location.href = `/payment-status?order_id=${result.order_id || 'error_no_order_id'}&status=error&message=${encodeURIComponent(result.status_message || (result.error_messages ? result.error_messages.join(', ') : 'Payment failed'))}`;
-                            },
+                            onSuccess: function (result) { window.location.href = `/payment-status?order_id=${result.order_id}&status=success&transaction_status=${result.transaction_status}&fraud_status=${result.fraud_status}`; },
+                            onPending: function (result) { window.location.href = `/payment-status?order_id=${result.order_id}&status=pending&transaction_status=${result.transaction_status}&fraud_status=${result.fraud_status}`; },
+                            onError: function (result) { window.location.href = `/payment-status?order_id=${result.order_id}&status=error&message=${encodeURIComponent(result.status_message || 'Payment failed')}`; },
                             onClose: function () {
                                 Swal.fire({
                                     title: 'Pembayaran Dibatalkan',
                                     text: 'Anda menutup jendela pembayaran. Apakah Anda ingin mencoba lagi?',
-                                    icon: 'warning',
-                                    showCancelButton: true,
-                                    confirmButtonText: 'Ya, coba lagi',
-                                    cancelButtonText: 'Tidak'
-                                }).then((result) => {
-                                    if (result.isConfirmed && checkoutModal) {
-                                       if(currentProductData) checkoutModal.style.display = 'flex';
-                                    }
-                                });
+                                    icon: 'warning', showCancelButton: true, confirmButtonText: 'Ya, coba lagi', cancelButtonText: 'Tidak'
+                                }).then((res) => { if (res.isConfirmed && checkoutModal && currentProductData) checkoutModal.style.display = 'flex'; });
                             }
                         });
-                    } else {
-                        Swal.fire('Error', data.error || 'Gagal membuat transaksi.', 'error');
+                    } else { 
+                        Swal.fire('Error', data.error || 'Gagal membuat transaksi. Token tidak diterima.', 'error');
                     }
                 })
                 .catch(err => {
                     console.error("Error creating transaction:", err);
-                    Swal.fire('Error', 'Terjadi kesalahan. Silakan coba lagi.', 'error');
+                    Swal.fire('Error', err.message || 'Terjadi kesalahan. Silakan coba lagi.', 'error');
                 })
                 .finally(() => {
                      proceedToPaymentBtn.disabled = false;
