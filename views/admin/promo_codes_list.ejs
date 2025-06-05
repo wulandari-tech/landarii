@@ -1,0 +1,51 @@
+<%- include('../partials/admin_header', { title: title }) %>
+
+<div style="margin-bottom: 20px; text-align: right;">
+    <a href="/admin/promocodes/add" class="btn-admin"><i class="fas fa-plus-circle"></i> Tambah Kode Promo</a>
+</div>
+
+<% if (promoCodes.length > 0) { %>
+<table class="admin-table">
+    <thead>
+        <tr>
+            <th>Kode</th>
+            <th>Deskripsi</th>
+            <th>Tipe</th>
+            <th>Nilai</th>
+            <th>Aktif</th>
+            <th>Kadaluarsa</th>
+            <th>Penggunaan</th>
+            <th>Aksi</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% promoCodes.forEach(promo => { %>
+        <tr>
+            <td><%= promo.code %></td>
+            <td><%= promo.description ? promo.description.substring(0,30) : 'N/A' %><%= promo.description && promo.description.length > 30 ? '...' : '' %></td>
+            <td><%= promo.discountType === 'percentage' ? 'Persen' : 'Tetap' %></td>
+            <td><%= promo.discountType === 'percentage' ? promo.discountValue + '%' : 'Rp ' + promo.discountValue.toLocaleString('id-ID') %></td>
+            <td>
+                 <form action="/admin/promocodes/toggle/<%= promo._id %>" method="POST" style="display: inline;">
+                    <button type="submit" class="btn-admin <%= promo.isActive ? '' : 'btn-admin-danger' %>" style="font-size: 0.8em; padding: 5px 8px;">
+                        <%= promo.isActive ? 'Aktif' : 'Nonaktif' %>
+                    </button>
+                </form>
+            </td>
+            <td><%= promo.expiryDate ? new Date(promo.expiryDate).toLocaleDateString('id-ID') : 'N/A' %></td>
+            <td><%= promo.timesUsed %> / <%= promo.maxUses || '∞' %></td>
+            <td>
+                <a href="/admin/promocodes/edit/<%= promo._id %>" class="btn-admin" style="margin-right: 5px; background-color: var(--accent-color);"><i class="fas fa-edit"></i> Edit</a>
+                <form action="/admin/promocodes/delete/<%= promo._id %>" method="POST" style="display: inline;" onsubmit="return confirm('Yakin ingin menghapus kode promo ini?');">
+                    <button type="submit" class="btn-admin btn-admin-danger"><i class="fas fa-trash-alt"></i> Hapus</button>
+                </form>
+            </td>
+        </tr>
+        <% }); %>
+    </tbody>
+</table>
+<% } else { %>
+<p>Belum ada kode promo. <a href="/admin/promocodes/add">Tambahkan kode promo baru</a>.</p>
+<% } %>
+
+<%- include('../partials/admin_footer') %>

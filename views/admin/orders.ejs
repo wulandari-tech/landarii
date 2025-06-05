@@ -1,0 +1,36 @@
+<%- include('../partials/admin_header', { title: 'Daftar Pesanan' }) %>
+
+<% if (orders.length > 0) { %>
+<table class="admin-table">
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Produk</th>
+            <th>Total (Rp)</th>
+            <th>Status</th>
+            <th>Tgl Pesan</th>
+            <th>Metode Pembayaran</th>
+            <th>Aksi</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% orders.forEach(order => { %>
+        <tr>
+            <td><%= order.order_id %></td>
+            <td><%= order.product_name %></td>
+            <td><%= order.amount.toLocaleString('id-ID') %></td>
+            <td><span class="status-badge status-<%= order.status %>"><%= order.status %></span></td>
+            <td><%= new Date(order.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short'}) %></td>
+            <td><%= order.payment_type ? order.payment_type.replace(/_/g, ' ').toUpperCase() : 'N/A' %></td>
+            <td>
+                <a href="/admin/orders/<%= order.order_id %>" class="btn-admin" style="background-color: var(--secondary-color);"><i class="fas fa-eye"></i> Detail</a>
+            </td>
+        </tr>
+        <% }); %>
+    </tbody>
+</table>
+<% } else { %>
+<p>Belum ada pesanan.</p>
+<% } %>
+
+<%- include('../partials/admin_footer') %>

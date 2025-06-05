@@ -1,0 +1,14 @@
+[
+  {
+    "id": "PROD-1749092917751",
+    "name": "JASA CREATE WEB",
+    "price": 25000,
+    "description": "full request for costumer",
+    "features": [
+      "fas-fa-code"
+    ],
+    "thumbnail": "/uploads/products/1749092917702.jpg",
+    "priceSuffix": "+",
+    "isPopular": true
+  }
+]

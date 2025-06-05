@@ -1,0 +1,34 @@
+<%- include('../partials/admin_header', { title: title }) %>
+
+<form action="<%= formAction %>" method="POST" enctype="multipart/form-data" class="admin-form">
+    <div class="form-group">
+        <label for="name">Nama Klien</label>
+        <input type="text" id="name" name="name" value="<%= testimonial ? testimonial.name : '' %>" required>
+    </div>
+    <div class="form-group">
+        <label for="quote">Kutipan Testimoni</label>
+        <textarea id="quote" name="quote" rows="4" required><%= testimonial ? testimonial.quote : '' %></textarea>
+    </div>
+    <div class="form-group">
+        <label for="rating">Rating (1-5, opsional)</label>
+        <input type="number" id="rating" name="rating" min="1" max="5" value="<%= testimonial ? testimonial.rating : '' %>">
+    </div>
+    <div class="form-group">
+        <label for="image">Foto Klien/Proyek (opsional)</label>
+        <input type="file" id="image" name="image" accept="image/*">
+        <% if (testimonial && testimonial.imagePath) { %>
+            <small>Gambar saat ini: <img src="<%= BASE_URL + testimonial.imagePath %>" alt="Current Image" style="width: 50px; vertical-align: middle; margin-left: 10px;"></small>
+            <input type="hidden" name="existingImagePath" value="<%= testimonial.imagePath %>">
+        <% } %>
+    </div>
+    <% if (testimonial) { %>
+    <div class="form-group checkbox-group">
+        <input type="checkbox" id="approved" name="approved" <%= testimonial.approved ? 'checked' : '' %>>
+        <label for="approved" style="margin-bottom: 0;">Setujui Testimoni Ini?</label>
+    </div>
+    <% } %>
+    <button type="submit" class="btn-admin"><i class="fas fa-save"></i> <%= testimonial ? 'Update' : 'Simpan' %> Testimoni</button>
+    <a href="/admin/testimonials" class="btn-admin" style="background-color: #7f8c8d; margin-left:10px;">Batal</a>
+</form>
+
+<%- include('../partials/admin_footer') %>

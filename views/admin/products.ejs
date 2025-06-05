@@ -1,0 +1,41 @@
+<%- include('../partials/admin_header', { title: 'Kelola Produk' }) %>
+
+<div style="margin-bottom: 20px; text-align: right;">
+    <a href="/admin/products/add" class="btn-admin"><i class="fas fa-plus-circle"></i> Tambah Produk Baru</a>
+</div>
+
+<% if (products.length > 0) { %>
+<table class="admin-table">
+    <thead>
+        <tr>
+            <th>Thumbnail</th>
+            <th>ID</th>
+            <th>Nama Produk</th>
+            <th>Harga (Rp)</th>
+            <th>Populer</th>
+            <th>Aksi</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% products.forEach(product => { %>
+        <tr>
+            <td><img src="<%= product.thumbnail %>" alt="<%= product.name %>" class="thumbnail-small"></td>
+            <td><%= product.id %></td>
+            <td><%= product.name %></td>
+            <td><%= product.price.toLocaleString('id-ID') %></td>
+            <td><%= product.isPopular ? 'Ya' : 'Tidak' %></td>
+            <td>
+                <a href="/admin/products/edit/<%= product.id %>" class="btn-admin" style="margin-right: 5px; background-color: var(--accent-color);"><i class="fas fa-edit"></i> Edit</a>
+                <form action="/admin/products/delete/<%= product.id %>" method="POST" style="display: inline;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk ini?');">
+                    <button type="submit" class="btn-admin btn-admin-danger"><i class="fas fa-trash-alt"></i> Hapus</button>
+                </form>
+            </td>
+        </tr>
+        <% }); %>
+    </tbody>
+</table>
+<% } else { %>
+<p>Belum ada produk. <a href="/admin/products/add">Tambahkan produk baru</a>.</p>
+<% } %>
+
+<%- include('../partials/admin_footer') %>

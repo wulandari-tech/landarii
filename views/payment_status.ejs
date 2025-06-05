@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    />
+    <style>
+        body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: var(--bg-light); text-align: center; padding: 20px; flex-direction: column; }
+        .status-container { background-color: var(--bg-white); padding: 40px; border-radius: 12px; box-shadow: var(--card-shadow); max-width: 600px; width: 90%;}
+        .status-icon { font-size: 4em; margin-bottom: 20px; }
+        .status-icon.success { color: #27ae60; }
+        .status-icon.error { color: #e74c3c; }
+        .status-icon.pending { color: var(--accent-color); }
+        .status-icon.challenge { color: #f39c12; }
+        h1 { font-size: 2em; color: var(--dark-blue-text); margin-bottom: 15px; }
+        p { font-size: 1.1em; color: #555; margin-bottom: 25px; }
+        .btn { display: inline-block; padding: 12px 25px; border-radius: 25px; text-decoration: none; font-weight: 500; transition: background-color 0.3s ease; margin: 5px; }
+        .btn-primary { background-color: var(--primary-color); color: white; }
+        .btn-primary:hover { background-color: var(--secondary-color); }
+        .btn-whatsapp { background-color: #25D366; color: white; }
+        .btn-whatsapp:hover { background-color: #128C7E; }
+        .order-details { margin-top: 20px; text-align: left; font-size: 0.9em; color: #777; border-top: 1px solid #eee; padding-top: 15px; }
+        .order-details strong { color: var(--dark-blue-text); }
+        .action-buttons { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="status-container">
+        <% if (status === 'success') { %>
+            <i class="fas fa-check-circle status-icon success"></i>
+            <h1>Pembayaran Berhasil!</h1>
+        <% } else if (status === 'pending') { %>
+            <i class="fas fa-hourglass-half status-icon pending"></i>
+            <h1>Pembayaran Tertunda</h1>
+        <% } else if (status === 'challenge') { %>
+            <i class="fas fa-exclamation-triangle status-icon challenge"></i>
+            <h1>Pembayaran Direview</h1>
+        <% } else { %>
+            <i class="fas fa-times-circle status-icon error"></i>
+            <h1>Pembayaran Gagal</h1>
+        <% } %>
+
+        <p><%= message %></p>
+
+        <% if (order) { %>
+            <div class="order-details">
+                <strong>Order ID:</strong> <%= order.order_id %><br>
+                <strong>Produk:</strong> <%= order.product_name %><br>
+                <strong>Total:</strong> Rp <%= order.amount.toLocaleString('id-ID') %><br>
+                <% if (order.payment_type) { %>
+                    <strong>Metode Pembayaran:</strong> <%= order.payment_type.replace(/_/g, ' ').toUpperCase() %>
+                <% } %><br>
+                <strong>Status Transaksi:</strong> <span class="status-badge status-<%= order.status %>"><%= order.status %></span>
+            </div>
+        <% } %>
+
+        <div class="action-buttons">
+            <% if (status === 'success' && whatsappLink) { %>
+                <a href="<%= whatsappLink %>" target="_blank" class="btn btn-whatsapp">
+                    <i class="fab fa-whatsapp"></i> Konfirmasi via WhatsApp
+                </a>
+            <% } %>
+            <a href="/" class="btn btn-primary">
+                <i class="fas fa-home"></i> Kembali ke Beranda
+            </a>
+        </div>
+    </div>
+
+    <script>
+        <% if (alertMessage) { %>
+            alert("<%= alertMessage.replace(/"/g, '\\"') %>"); // Tampilkan alert
+        <% } %>
+
+        <% if (status === 'success' && whatsappLink) { %>
+            setTimeout(function() {
+                window.location.href = "<%= whatsappLink %>";
+            }, 3500); // Redirect ke WA setelah 3.5 detik jika sukses
+        <% } %>
+    </script>
+</body>
+</html>

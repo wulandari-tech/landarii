@@ -1,0 +1,38 @@
+<%- include('../partials/admin_header', { title: 'Tambah Produk Baru' }) %>
+
+<form action="/admin/products/add" method="POST" enctype="multipart/form-data" class="admin-form">
+    <div class="form-group">
+        <label for="name">Nama Produk</label>
+        <input type="text" id="name" name="name" required>
+    </div>
+    <div class="form-group">
+        <label for="price">Harga (Rp)</label>
+        <input type="number" id="price" name="price" required min="0">
+    </div>
+    <div class="form-group">
+        <label for="description">Deskripsi Singkat</label>
+        <textarea id="description" name="description" rows="3" required></textarea>
+    </div>
+     <div class="form-group">
+     <label for="features">Fitur (pisahkan dengan koma)</label>
+     <textarea id="features" name="features" rows="5" placeholder="Contoh: fas fa-check-circle Desain Responsif, fab fa-searchengin Optimasi SEO, Layanan 24/7"></textarea>
+     <small>Untuk ikon, awali dengan kelas Font Awesome (misal: fas fa-star Fitur Unggulan).</small>
+ </div>
+    <div class="form-group">
+        <label for="thumbnail">Thumbnail Produk</label>
+        <input type="file" id="thumbnail" name="thumbnail" accept="image/*">
+        <small>Kosongkan jika menggunakan default.</small>
+    </div>
+     <div class="form-group">
+        <label for="priceSuffix">Akhiran Harga (Contoh: + atau /bulan)</label>
+        <input type="text" id="priceSuffix" name="priceSuffix">
+    </div>
+    <div class="form-group checkbox-group">
+        <input type="checkbox" id="isPopular" name="isPopular">
+        <label for="isPopular" style="margin-bottom: 0;">Jadikan Populer?</label>
+    </div>
+    <button type="submit" class="btn-admin"><i class="fas fa-save"></i> Simpan Produk</button>
+    <a href="/admin/products" class="btn-admin" style="background-color: #7f8c8d; margin-left:10px;">Batal</a>
+</form>
+
+<%- include('../partials/admin_footer') %>

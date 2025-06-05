@@ -1,0 +1,53 @@
+<%- include('../partials/admin_header', { title: title }) %>
+
+<div style="margin-bottom: 20px; text-align: right;">
+    <a href="/admin/testimonials/add" class="btn-admin"><i class="fas fa-plus-circle"></i> Tambah Testimoni</a>
+</div>
+
+<% if (testimonials.length > 0) { %>
+<table class="admin-table">
+    <thead>
+        <tr>
+            <th>Gambar</th>
+            <th>Nama</th>
+            <th>Kutipan</th>
+            <th>Rating</th>
+            <th>Disetujui</th>
+            <th>Aksi</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% testimonials.forEach(testimonial => { %>
+        <tr>
+            <td>
+                <% if (testimonial.imagePath) { %>
+                    <img src="<%= BASE_URL + testimonial.imagePath %>" alt="<%= testimonial.name %>" class="thumbnail-small" style="width: 60px; height: 60px; object-fit: cover;">
+                <% } else { %>
+                    <span>N/A</span>
+                <% } %>
+            </td>
+            <td><%= testimonial.name %></td>
+            <td><%= testimonial.quote.substring(0, 50) %><% if (testimonial.quote.length > 50) { %>...<% } %></td>
+            <td><%= testimonial.rating || 'N/A' %></td>
+            <td>
+                <form action="/admin/testimonials/approve/<%= testimonial._id %>" method="POST" style="display: inline;">
+                    <button type="submit" class="btn-admin <%= testimonial.approved ? 'btn-admin-danger' : '' %>" style="font-size: 0.8em; padding: 5px 8px;">
+                        <%= testimonial.approved ? 'Batal Setujui' : 'Setujui' %>
+                    </button>
+                </form>
+            </td>
+            <td>
+                <a href="/admin/testimonials/edit/<%= testimonial._id %>" class="btn-admin" style="margin-right: 5px; background-color: var(--accent-color);"><i class="fas fa-edit"></i> Edit</a>
+                <form action="/admin/testimonials/delete/<%= testimonial._id %>" method="POST" style="display: inline;" onsubmit="return confirm('Yakin ingin menghapus testimoni ini?');">
+                    <button type="submit" class="btn-admin btn-admin-danger"><i class="fas fa-trash-alt"></i> Hapus</button>
+                </form>
+            </td>
+        </tr>
+        <% }); %>
+    </tbody>
+</table>
+<% } else { %>
+<p>Belum ada testimoni. <a href="/admin/testimonials/add">Tambahkan testimoni baru</a>.</p>
+<% } %>
+
+<%- include('../partials/admin_footer') %>

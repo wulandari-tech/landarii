@@ -1,0 +1,49 @@
+<%- include('../partials/admin_header', { title: 'Detail Pesanan: ' + order.order_id }) %>
+
+<div class="admin-form" style="max-width: 800px;">
+    <h3>Informasi Pesanan</h3>
+    <p><strong>Order ID:</strong> <%= order.order_id %></p>
+    <p><strong>Produk:</strong> <%= order.product_name %> (ID: <%= order.product_id %>)</p>
+    <% if (typeof order.original_amount !== 'undefined' && order.original_amount !== order.amount) { %>
+        <p><strong>Harga Asli Produk:</strong> Rp <%= order.original_amount.toLocaleString('id-ID') %></p>
+        <p><strong>Diskon Diterapkan:</strong> - Rp <%= (order.discount_applied || 0).toLocaleString('id-ID') %></p>
+        <% if (order.promo_code_used) { %>
+            <p><strong>Kode Promo Digunakan:</strong> <%= order.promo_code_used %></p>
+        <% } %>
+    <% } %>
+    <p><strong>Total Pembayaran:</strong> Rp <%= order.amount.toLocaleString('id-ID') %></p>
+    <p><strong>Status:</strong> <span class="status-badge status-<%= order.status %>"><%= order.status %></span></p>
+    <p><strong>Tanggal Pesan:</strong> <%= new Date(order.created_at).toLocaleString('id-ID', { dateStyle: 'full', timeStyle: 'long'}) %></p>
+    <% if (order.updated_at && new Date(order.updated_at).getTime() !== new Date(order.created_at).getTime()) { %>
+        <p><strong>Terakhir Update:</strong> <%= new Date(order.updated_at).toLocaleString('id-ID', { dateStyle: 'full', timeStyle: 'long'}) %></p>
+    <% } %>
+
+    <hr style="margin: 20px 0;">
+
+    <h3>Informasi Pelanggan</h3>
+    <p><strong>Alamat IP:</strong> <%= order.customer_ip %></p>
+    <p><strong>User Agent (Browser/OS):</strong> <%= order.customer_user_agent %></p>
+    <% if (order.midtrans_response && order.midtrans_response.customer_details) { %>
+        <p><strong>Email Pelanggan (dari Midtrans):</strong> <%= order.midtrans_response.customer_details.email %></p>
+        <p><strong>Telepon Pelanggan (dari Midtrans):</strong> <%= order.midtrans_response.customer_details.phone %></p>
+    <% } %>
+
+    <hr style="margin: 20px 0;">
+
+    <h3>Detail Transaksi Midtrans</h3>
+    <p><strong>Metode Pembayaran:</strong> <%= order.payment_type ? order.payment_type.replace(/_/g, ' ').toUpperCase() : 'N/A' %></p>
+    <p><strong>Midtrans Transaction ID:</strong> <%= (order.midtrans_response && order.midtrans_response.transaction_id) ? order.midtrans_response.transaction_id : 'N/A' %></p>
+    <p><strong>Status Midtrans:</strong> <%= (order.midtrans_response && order.midtrans_response.transaction_status) ? order.midtrans_response.transaction_status : 'N/A' %></p>
+    <p><strong>Fraud Status:</strong> <%= (order.midtrans_response && order.midtrans_response.fraud_status) ? order.midtrans_response.fraud_status : 'N/A' %></p>
+    
+    <% if (order.midtrans_response) { %>
+        <h4>Raw Response Midtrans:</h4>
+        <pre style="background: #f0f0f0; padding: 10px; border-radius: 5px; max-height: 300px; overflow-y: auto; font-size: 0.8em;"><%= JSON.stringify(order.midtrans_response, null, 2) %></pre>
+    <% } %>
+
+    <div style="margin-top: 30px;">
+        <a href="/admin/orders" class="btn-admin"><i class="fas fa-arrow-left"></i> Kembali ke Daftar Pesanan</a>
+    </div>
+</div>
+
+<%- include('../partials/admin_footer') %>

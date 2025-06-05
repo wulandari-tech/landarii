@@ -1,0 +1,51 @@
+<%- include('../partials/admin_header', { title: title }) %>
+
+<form action="<%= formAction %>" method="POST" class="admin-form">
+    <% if (typeof error !== 'undefined' && error) { %>
+        <p style="color: red; background-color: #ffebee; padding: 10px; border-radius: 5px; margin-bottom: 15px;"><%= error %></p>
+    <% } %>
+    <div class="form-group">
+        <label for="code">Kode Promo (unik, huruf kapital)</label>
+        <input type="text" id="code" name="code" value="<%= promoCode ? promoCode.code : '' %>" required style="text-transform:uppercase">
+    </div>
+    <div class="form-group">
+        <label for="description">Deskripsi Singkat (opsional)</label>
+        <input type="text" id="description" name="description" value="<%= promoCode ? promoCode.description : '' %>">
+    </div>
+    <div class="form-group">
+        <label for="discountType">Tipe Diskon</label>
+        <select id="discountType" name="discountType" required>
+            <option value="percentage" <%= (promoCode && promoCode.discountType === 'percentage') ? 'selected' : '' %>>Persentase (%)</option>
+            <option value="fixed" <%= (promoCode && promoCode.discountType === 'fixed') ? 'selected' : '' %>>Nominal Tetap (Rp)</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="discountValue">Nilai Diskon</label>
+        <input type="number" id="discountValue" name="discountValue" value="<%= promoCode ? promoCode.discountValue : '' %>" required min="0" step="any">
+        <small>Jika persentase, masukkan angka (misal: 10 untuk 10%). Jika nominal, masukkan angka (misal: 50000 untuk Rp 50.000).</small>
+    </div>
+     <div class="form-group">
+        <label for="minOrderAmount">Minimum Order (Rp, opsional)</label>
+        <input type="number" id="minOrderAmount" name="minOrderAmount" value="<%= promoCode ? promoCode.minOrderAmount : '0' %>" min="0" step="any">
+        <small>Promo hanya berlaku jika total order mencapai jumlah ini. Kosongkan atau 0 jika tidak ada minimum.</small>
+    </div>
+    <div class="form-group">
+        <label for="expiryDate">Tanggal Kadaluarsa (opsional)</label>
+        <input type="date" id="expiryDate" name="expiryDate" value="<%= promoCode ? promoCode.expiryDate : '' %>">
+    </div>
+    <div class="form-group">
+        <label for="maxUses">Maksimum Penggunaan (opsional)</label>
+        <input type="number" id="maxUses" name="maxUses" value="<%= promoCode ? promoCode.maxUses : '' %>" min="0">
+        <small>Kosongkan jika tidak ada batasan penggunaan.</small>
+    </div>
+    <% if (promoCode) { %>
+    <div class="form-group checkbox-group">
+        <input type="checkbox" id="isActive" name="isActive" <%= promoCode.isActive ? 'checked' : '' %>>
+        <label for="isActive" style="margin-bottom: 0;">Aktifkan Kode Promo Ini?</label>
+    </div>
+    <% } %>
+    <button type="submit" class="btn-admin"><i class="fas fa-save"></i> <%= promoCode ? 'Update' : 'Simpan' %> Kode Promo</button>
+    <a href="/admin/promocodes" class="btn-admin" style="background-color: #7f8c8d; margin-left:10px;">Batal</a>
+</form>
+
+<%- include('../partials/admin_footer') %>

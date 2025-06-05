@@ -1,0 +1,62 @@
+[
+  {
+    "order_id": "WFC-1749094567769QRFVQ",
+    "product_id": "PROD-1749092917751",
+    "product_name": "JASA CREATE WEB",
+    "original_amount": 25000,
+    "discount_applied": 22500,
+    "amount": 2500,
+    "promo_code_used": "WANZ",
+    "status": "pending",
+    "created_at": "2025-06-05T03:36:08.518Z",
+    "updated_at": "2025-06-05T03:36:08.523Z",
+    "customer_ip": "::1",
+    "customer_user_agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Mobile Safari/537.36",
+    "midtrans_token": "64ee7df7-8399-43de-bca0-0c67dbe1ccec"
+  },
+  {
+    "order_id": "WFC-17490947978602QAWK",
+    "product_id": "PROD-1749092917751",
+    "product_name": "JASA CREATE WEB",
+    "original_amount": 25000,
+    "discount_applied": 0,
+    "amount": 25000,
+    "promo_code_used": null,
+    "status": "pending",
+    "created_at": "2025-06-05T03:39:58.387Z",
+    "updated_at": "2025-06-05T03:39:58.387Z",
+    "customer_ip": "::1",
+    "customer_user_agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Mobile Safari/537.36",
+    "midtrans_token": "390c2ab8-df72-4fe0-8ee1-9c7f59fb1a04"
+  },
+  {
+    "order_id": "WFC-1749094926079441DC",
+    "product_id": "PROD-1749092917751",
+    "product_name": "JASA CREATE WEB",
+    "original_amount": 25000,
+    "discount_applied": 2500,
+    "amount": 22500,
+    "promo_code_used": "WANZ",
+    "status": "pending",
+    "created_at": "2025-06-05T03:42:06.599Z",
+    "updated_at": "2025-06-05T03:42:06.599Z",
+    "customer_ip": "::1",
+    "customer_user_agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Mobile Safari/537.36",
+    "midtrans_token": "52b0ecc3-91ac-4920-be0b-b2ca1aa1592f"
+  },
+  {
+    "order_id": "WFC-1749104521828UOGLC",
+    "product_id": "PROD-1749092917751",
+    "product_name": "JASA CREATE WEB",
+    "original_amount": 25000,
+    "discount_applied": 0,
+    "amount": 25000,
+    "promo_code_used": null,
+    "status": "pending",
+    "created_at": "2025-06-05T06:22:02.356Z",
+    "updated_at": "2025-06-05T06:22:02.356Z",
+    "customer_ip": "::1",
+    "customer_user_agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Mobile Safari/537.36",
+    "midtrans_token": "d4fed463-d162-4598-947d-eb2eef072e99"
+  }
+]

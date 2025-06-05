@@ -1,0 +1,31 @@
+<div id="checkoutModal" class="modal" style="display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); align-items: center; justify-content: center;">
+    <div class="modal-content" style="background-color: #fff; margin: auto; padding: 25px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); width: 90%; max-width: 500px; position: relative;">
+        <span class="close-modal-btn" style="color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; position: absolute; top: 10px; right: 15px;">×</span>
+        <h2 id="modalProductName" style="margin-top: 0; margin-bottom: 20px; color: var(--dark-blue-text); font-size: 1.8em;">Nama Produk</h2>
+        
+        <div id="modalProductDetails">
+            <p><strong>Harga Asli:</strong> Rp <span id="modalOriginalPrice">0</span></p>
+        </div>
+
+        <div class="form-group" style="margin-top: 20px; margin-bottom: 15px;">
+            <label for="promoCodeInput" style="display: block; margin-bottom: 5px; font-weight: 500;">Kode Promo:</label>
+            <div style="display: flex;">
+                <input type="text" id="promoCodeInput" placeholder="Masukkan kode promo" style="flex-grow: 1; padding: 10px; border: 1px solid #ccc; border-radius: 5px 0 0 5px; font-size: 0.95em;">
+                <button id="applyPromoBtn" class="btn-admin" style="border-radius: 0 5px 5px 0; padding: 10px 15px; font-size: 0.9em;">Terapkan</button>
+            </div>
+            <p id="promoMessage" style="font-size: 0.85em; margin-top: 8px; min-height: 1.2em;"></p>
+        </div>
+
+        <div id="modalPriceSummary" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
+            <p><strong>Diskon:</strong> - Rp <span id="modalDiscountAmount">0</span></p>
+            <h3 style="color: var(--primary-color); font-size: 1.5em;">Total Bayar: Rp <span id="modalFinalPrice">0</span></h3>
+        </div>
+        
+        <input type="hidden" id="modalProductId">
+        <input type="hidden" id="modalAppliedPromoCode">
+
+        <button id="proceedToPaymentBtn" class="hero-cta-button" style="width: 100%; margin-top: 25px; font-size: 1.1em;">
+            <i class="fas fa-credit-card"></i> Lanjutkan ke Pembayaran
+        </button>
+    </div>
+</div>

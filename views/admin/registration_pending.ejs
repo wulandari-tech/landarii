@@ -1,0 +1,12 @@
+
+<%- include('../partials/admin_header', { title: title }) %>
+<div class="admin-form" style="max-width: 500px; margin-top: 50px; text-align: center;">
+    <i class="fas fa-hourglass-half fa-3x" style="color: var(--accent-color); margin-bottom: 20px;"></i>
+    <h2 style="margin-bottom: 15px;">Registrasi Anda Sedang Ditinjau</h2>
+    <p>Terima kasih, <strong><%= username %></strong>, telah mendaftar.</p>
+    <p>Akun Anda akan segera ditinjau dan disetujui oleh administrator. Mohon tunggu konfirmasi lebih lanjut.</p>
+    <p style="margin-top: 25px;">
+        <a href="/admin/login" class="btn-admin">Ke Halaman Login</a>
+    </p>
+</div>
+<%- include('../partials/admin_footer') %>

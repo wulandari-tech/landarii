@@ -1,0 +1,10 @@
+<% if (!cookieConsent) { %>
+<div id="cookieConsentBanner" style="position: fixed; bottom: 0; left: 0; width: 100%; background-color: rgba(44, 62, 80, 0.95); color: white; padding: 15px 20px; z-index: 2000; display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(5px);">
+    <p style="margin: 0; font-size: 0.9em;">
+        Situs web ini menggunakan cookie untuk memastikan Anda mendapatkan pengalaman terbaik di situs web kami dan untuk menganalisis lalu lintas. Dengan melanjutkan browsing, Anda menyetujui penggunaan cookie kami.
+    </p>
+    <button id="acceptCookieButton" style="background-color: var(--primary-color); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: 500; margin-left: 20px;">
+        <i class="fas fa-check-circle"></i> Setuju
+    </button>
+</div>
+<% } %>

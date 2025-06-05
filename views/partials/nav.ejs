@@ -1,0 +1,52 @@
+<aside class="sidebar <%= isAdminRoute ? 'admin-sidebar-style' : '' %> <%= locals.sidebarOpen ? 'open' : '' %>" id="sidebar" style="<%= isAdminRoute ? 'width: 250px; background-color: var(--dark-blue-text); z-index: 1001;' : '' %>">
+    <div class="sidebar-header-controls" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; <%= !isAdminRoute ? 'position: absolute; top: 15px; right: -45px; background-color: rgba(44, 62, 80, 0.8); border-radius: 0 5px 5px 0; z-index:1002;' : (isAdminRoute ? '' : 'display:none;') %>">
+        <button id="sidebarMenuToggle" class="menu-toggle-btn" style="background: none; border: none; color: white; font-size: 1.8em; cursor: pointer; padding: 5px;">
+            <i class="fas <%= locals.sidebarOpen ? 'fa-times' : 'fa-bars' %>"></i>
+        </button>
+    </div>
+
+    <div class="sidebar-logo-container" style="<%= isAdminRoute ? 'margin-bottom: 20px; padding-top:15px;' : 'padding-top: 60px;' %>">
+        <%- logoSvgContent %>
+        <h1 class="brand-title" style="<%= isAdminRoute ? 'font-size: 1.5em;' : '' %>">
+            <%= isAdminRoute ? 'Admin Panel' : 'WANZOFC-TECH' %>
+        </h1>
+        <% if (!isAdminRoute) { %>
+            <p class="brand-subtitle">Jasa Create Web Profesional</p>
+        <% } else { %>
+            <p class="brand-subtitle" style="font-size: 0.8em;">WANZOFC-TECH</p>
+        <% } %>
+    </div>
+
+    <ul class="sidebar-nav">
+        <% if (isAdminRoute) { %>
+            <li><a href="/admin/dashboard" class="<%= currentPath === '/admin/dashboard' ? 'active' : '' %>"><span class="icon"><i class="fas fa-tachometer-alt"></i></span> Dashboard</a></li>
+            <li><a href="/admin/products" class="<%= currentPath.startsWith('/admin/products') ? 'active' : '' %>"><span class="icon"><i class="fas fa-box-open"></i></span> Produk</a></li>
+            <li><a href="/admin/orders" class="<%= currentPath.startsWith('/admin/orders') ? 'active' : '' %>"><span class="icon"><i class="fas fa-file-invoice-dollar"></i></span> Pesanan</a></li>
+            <li><a href="/admin/testimonials" class="<%= currentPath.startsWith('/admin/testimonials') ? 'active' : '' %>"><span class="icon"><i class="fas fa-comments"></i></span> Testimoni</a></li>
+            <li><a href="/admin/promocodes" class="<%= currentPath.startsWith('/admin/promocodes') ? 'active' : '' %>"><span class="icon"><i class="fas fa-tags"></i></span> Kode Promo</a></li>
+            <li><a href="/" target="_blank"><span class="icon"><i class="fas fa-store"></i></span> Lihat Toko</a></li>
+        <% } else { %>
+            <% if (currentPath === '/' || currentPath.startsWith('/#')) { %>
+                <li><a href="/#hero" class="<%= currentPath === '/' || currentPath.startsWith('/#hero') ? 'active' : '' %>"><span class="icon"><i class="fas fa-home"></i></span> Beranda</a></li>
+                <li><a href="/#services" class="<%= currentPath.startsWith('/#services') ? 'active' : '' %>"><span class="icon"><i class="fas fa-concierge-bell"></i></span> Layanan</a></li>
+                <li><a href="/#pricing" class="<%= currentPath.startsWith('/#pricing') ? 'active' : '' %>"><span class="icon"><i class="fas fa-tags"></i></span> Harga</a></li>
+                <li><a href="/#contact" class="<%= currentPath.startsWith('/#contact') ? 'active' : '' %>"><span class="icon"><i class="fas fa-envelope"></i></span> Kontak</a></li>
+            <% } else { %>
+                 <li><a href="/" class="<%= currentPath === '/' ? 'active' : '' %>"><span class="icon"><i class="fas fa-home"></i></span> Beranda</a></li>
+            <% } %>
+            <li><a href="/testimonials" class="<%= currentPath.startsWith('/testimonials') ? 'active' : '' %>"><span class="icon"><i class="fas fa-star"></i></span> Testimoni</a></li>
+        <% } %>
+    </ul>
+
+    <% if (!isAdminRoute) { %>
+        <div class="sidebar-contact-buttons">
+            <a href="https://wa.me/message/OUC34BIRP237G1" target="_blank" class="btn whatsapp-btn">
+                <span class="icon"><i class="fab fa-whatsapp"></i></span> Tanya via WhatsApp
+            </a>
+        </div>
+    <% } else if (isAdminRoute) { %>
+        <div style="margin-top: auto; padding: 15px 0; text-align:center; border-top: 1px solid rgba(255,255,255,0.1);">
+            <small style="color: #ccc; font-size: 0.8em;">© <%= new Date().getFullYear() %> WANZOFC-TECH</small>
+        </div>
+    <% } %>
+</aside>

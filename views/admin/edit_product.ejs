@@ -1,0 +1,38 @@
+<%- include('../partials/admin_header', { title: 'Edit Produk: ' + product.name }) %>
+
+<form action="/admin/products/edit/<%= product.id %>" method="POST" enctype="multipart/form-data" class="admin-form">
+    <div class="form-group">
+        <label for="name">Nama Produk</label>
+        <input type="text" id="name" name="name" value="<%= product.name %>" required>
+    </div>
+    <div class="form-group">
+        <label for="price">Harga (Rp)</label>
+        <input type="number" id="price" name="price" value="<%= product.price %>" required min="0">
+    </div>
+    <div class="form-group">
+        <label for="description">Deskripsi Singkat</label>
+        <textarea id="description" name="description" rows="3" required><%= product.description %></textarea>
+    </div>
+    <div class="form-group">
+        <label for="features">Fitur (pisahkan dengan koma)</label>
+        <input type="text" id="features" name="features" value="<%= product.features.join(', ') %>">
+    </div>
+    <div class="form-group">
+        <label for="thumbnail">Thumbnail Produk</label>
+        <input type="file" id="thumbnail" name="thumbnail" accept="image/*">
+        <small>Thumbnail saat ini: <img src="<%= product.thumbnail %>" alt="Current Thumbnail" style="width: 50px; vertical-align: middle; margin-left: 10px;">. Kosongkan jika tidak ingin mengubah.</small>
+        <input type="hidden" name="existingThumbnail" value="<%= product.thumbnail %>">
+    </div>
+    <div class="form-group">
+        <label for="priceSuffix">Akhiran Harga (Contoh: + atau /bulan)</label>
+        <input type="text" id="priceSuffix" name="priceSuffix" value="<%= product.priceSuffix || '' %>">
+    </div>
+    <div class="form-group checkbox-group">
+        <input type="checkbox" id="isPopular" name="isPopular" <%= product.isPopular ? 'checked' : '' %>>
+        <label for="isPopular" style="margin-bottom: 0;">Jadikan Populer?</label>
+    </div>
+    <button type="submit" class="btn-admin"><i class="fas fa-save"></i> Update Produk</button>
+    <a href="/admin/products" class="btn-admin" style="background-color: #7f8c8d; margin-left:10px;">Batal</a>
+</form>
+
+<%- include('../partials/admin_footer') %>

@@ -1,0 +1,91 @@
+<%- include('partials/header', { title: title }) %>
+
+<div class="main-content-area <%= isAdminRoute ? 'admin-main-content-style' : '' %>">
+    <% if (!isAdminRoute) { %>
+    <header class="main-header-nav">
+         <div class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></div>
+        <div>
+            <a href="/#hero" class="<%= currentPath === '/' || currentPath.startsWith('/#hero') ? 'active' : '' %>">Beranda</a>
+            <a href="/#services" class="<%= currentPath.startsWith('/#services') ? 'active' : '' %>">Layanan</a>
+            <a href="/#pricing" class="<%= currentPath.startsWith('/#pricing') ? 'active' : '' %>">Harga</a>
+            <a href="/testimonials" class="<%= currentPath.startsWith('/testimonials') ? 'active' : '' %>">Testimoni</a>
+            <a href="/#contact" class="<%= currentPath.startsWith('/#contact') ? 'active' : '' %>">Kontak</a>
+        </div>
+    </header>
+    <% } %>
+
+    <% if (promoMessage && !isAdminRoute) { %>
+        <div class="promo-marquee-banner" style="background-color: var(--primary-color); color: white; padding: 10px 0; text-align: center; font-weight: 500; position: sticky; top: <%= mainHeaderNavHeight || '68px' %>; z-index: 899;">
+            <marquee behavior="scroll" direction="left"><i class="fas fa-bullhorn"></i> <%= promoMessage %></marquee>
+        </div>
+    <% } %>
+
+    <section id="hero" class="content-section" style="<%= (promoMessage && !isAdminRoute) ? 'padding-top: calc(50px + 40px);' : 'padding-top: 50px;'%>">
+        <div class="hero-text" data-aos="fade-right" data-aos-delay="200">
+            <span class="greeting">Selamat Datang di WANZOFC-TECH!</span>
+            <h1>Jasa Pembuatan Website Impian Anda</h1>
+            <p class="lead">Kami siap mewujudkan website sesuai keinginan Anda, dengan desain menawan dan fungsionalitas terbaik. Fokus pada kualitas dan kepuasan pelanggan.</p>
+            <a href="/#contact" class="hero-cta-button">Hubungi Kami Sekarang <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="hero-illustration" data-aos="fade-left" data-aos-delay="400">
+            <img src="https://files.catbox.moe/la9ioi.png" alt="Laptop Mockup" class="mockup-laptop">
+        </div>
+    </section>
+
+    <section id="services" class="content-section">
+        <h2 class="section-title" data-aos="fade-up">Layanan Unggulan Kami</h2>
+        <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Kami menyediakan berbagai layanan untuk memastikan website Anda tampil maksimal dan sesuai kebutuhan.</p>
+        <div class="services-grid">
+            <div class="service-card" data-aos="fade-up" data-aos-delay="200"><span class="icon"><i class="fas fa-drafting-compass"></i></span><h3>Request Kustom</h3><p>Menerima semua jenis request dari customer untuk pembuatan website yang unik dan personal.</p></div>
+            <div class="service-card" data-aos="fade-up" data-aos-delay="300"><span class="icon"><i class="fas fa-magic"></i></span><h3>Desain & Beautifikasi</h3><p>Mendesain dan mempercantik halaman utama (homepage) Anda, bahkan melebihi ekspektasi (free bonus!).</p></div>
+            <div class="service-card" data-aos="fade-up" data-aos-delay="400"><span class="icon"><i class="fas fa-tools"></i></span><h3>Perbaikan Website</h3><p>Membuka jasa perbaikan (fix) untuk semua tipe masalah pada website Anda agar berfungsi optimal.</p></div>
+            <div class="service-card" data-aos="fade-up" data-aos-delay="500"><span class="icon"><i class="fas fa-puzzle-piece"></i></span><h3>Penambahan Fitur</h3><p>Menambah fitur-fitur tertentu sesuai kebutuhan untuk meningkatkan fungsionalitas website.</p></div>
+        </div>
+    </section>
+
+    <section id="pricing" class="content-section">
+        <h2 class="section-title" data-aos="fade-up">Paket Harga Fleksibel</h2>
+        <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Pilih paket yang paling sesuai dengan kebutuhan dan budget Anda.</p>
+        <div class="pricing-grid">
+            <% products.forEach(product => { %>
+            <div class="pricing-card <%= product.isPopular ? 'popular' : '' %>" data-aos="zoom-in" data-aos-delay="200">
+                <img src="<%= product.thumbnail.startsWith('http') ? product.thumbnail : (BASE_URL + product.thumbnail) %>" alt="<%= product.name %> Thumbnail" class="product-thumbnail">
+                <h3 class="plan-name"><%= product.name %></h3>
+                <div class="price"><%= (product.price / 1000) %><span class="currency">rb</span><%= product.priceSuffix || '' %></div>
+                <p class="price-note"><%= product.description %></p>
+                <ul class="features">
+                    <% product.features.forEach(feature => { %>
+                        <li>
+                            <% if (feature.toLowerCase().includes('fas fa-') || feature.toLowerCase().includes('fab fa-')) { 
+                                const iconParts = feature.match(/^(fa[sbrl]?\sfa-[\w-]+)\s*(.*)/i);
+                                if (iconParts && iconParts[1] && iconParts[2]) { %>
+                                    <i class="<%= iconParts[1] %>" style="margin-right: 8px; color: var(--primary-color);"></i>
+                                    <%= iconParts[2].trim() %>
+                                <% } else { %>
+                                    <i class="fas fa-check-circle"></i> <%= feature %>
+                                <% }
+                            } else { %>
+                                <i class="fas fa-check-circle"></i> <%= feature %>
+                            <% } %>
+                        </li>
+                    <% }); %>
+                </ul>
+                <button class="btn-choose-plan buy-now-btn" data-product-id="<%= product.id %>"><i class="fas fa-shopping-cart"></i> Pilih Paket</button>
+            </div>
+            <% }); %>
+        </div>
+        <div class="promo-note" data-aos="fade-up" data-aos-delay="200"><i class="fas fa-gift"></i> Dapatkan <strong>diskon atau promo spesial</strong> untuk pembelian pertama Anda! Tanyakan detailnya saat konsultasi.</div>
+    </section>
+
+    <section id="contact" class="content-section">
+        <h2 class="section-title" data-aos="fade-up">Siap Memulai Proyek Anda?</h2>
+        <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Jangan ragu untuk bertanya atau berdiskusi dengan kami. Kami siap membantu mewujudkan website impian Anda.</p>
+        <div class="contact-content" data-aos="fade-up" data-aos-delay="200">
+            <p>Klik tombol di bawah ini untuk langsung terhubung dengan Owner WANZOFC-TECH melalui WhatsApp. Konsultasi gratis!</p>
+            <a href="https://wa.me/message/OUC34BIRP237G1" target="_blank" class="contact-whatsapp-button"><i class="fab fa-whatsapp"></i> Hubungi via WhatsApp</a>
+            <p class="contact-note">"Skip tanya-tanya, no buy" - Kami percaya diskusi adalah kunci keberhasilan proyek. Jangan sungkan!</p>
+        </div>
+    </section>
+</div>
+<%- include('partials/checkout_modal') %>
+<%- include('partials/footer') %>
